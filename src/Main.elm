@@ -20,10 +20,17 @@ type Msg
     = NoOp
 
 init : Flags -> Url -> Key -> (Model, Cmd Msg)
-init flags url key = 
+init flags url1 key = 
     let 
-        _=
-           Debug.log "url" url
+        --mock the url
+        url = 
+            { fragment = Nothing
+            , host = "localhost"
+            , path = "/signin/527hfr8ufvsd723ruijufr9`"
+            , port_ = Just 3000
+            , protocol = "Http1"
+            , query = Nothing 
+            }
 
         token = 
             url.path
@@ -40,13 +47,12 @@ init flags url key =
 
 
         -- token =
-            -- case List.reverse parts |> List.head of
-                -- Nothing -> 
-                --     Nothing
-                -- Just tok -> 
-                --     Just (Token tok)
+        --     case List.reverse parts |> List.head of
+        --         Nothing -> 
+        --             Nothing
+        --         Just tok -> 
+        --             Just (Token tok)
 
-        _=Debug.log "token" token
 
         newModel = 
             {token = token
