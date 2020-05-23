@@ -10,8 +10,11 @@ import Url exposing (Url)
 type alias Flags = 
     {}
 
+type Token = Token String
+
 type alias Model = 
-    { name: String }
+    { token: Maybe Token
+    , navigationKey: Key }
 
 type Msg 
     = NoOp
@@ -21,8 +24,38 @@ init flags url key =
     let 
         _=
            Debug.log "url" url
+
+        token = 
+            url.path
+            |> String.split "/"
+            |> List.reverse
+            |> List.head
+            |> Maybe.map Token
+
+
+        -- parts =  
+        --     Debug.log "parts" ( String.split "/" url.path )
+
+        -- token = Maybe.map Token (List.reverse parts |> List.head)
+
+
+        -- token =
+            -- case List.reverse parts |> List.head of
+                -- Nothing -> 
+                --     Nothing
+                -- Just tok -> 
+                --     Just (Token tok)
+
+        _=Debug.log "token" token
+
+        newModel = 
+            {token = token
+            ,navigationKey = key
+            }
+
+        _=Debug.log "newModel" newModel
     in
-    ( Model "Jack", Cmd.none )
+    ( newModel , Cmd.none )
 
 -- VIEW
 
