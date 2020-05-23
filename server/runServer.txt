@@ -1,0 +1,1 @@
+http-server server -a localhost -p 5016 --cors
