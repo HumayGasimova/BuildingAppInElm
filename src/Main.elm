@@ -4,6 +4,7 @@ import Browser exposing (Document, UrlRequest)
 import Browser.Navigation exposing (Key)
 import Html exposing (Html)
 import Url exposing (Url)
+import Url.Parser as Parser exposing ((</>))
 
 -- MODEL
 
@@ -19,10 +20,20 @@ type alias Model =
 type Msg 
     = NoOp
 
+type Route = 
+    Signin String 
+    | NotFound
+
+routeParser : Parser.Parser (Route -> a) a
+routeParser = 
+    Parser.oneOf
+        [Parser.map Signin (Parser.s "signin" </> Parser.string)
+        ]
+
 init : Flags -> Url -> Key -> (Model, Cmd Msg)
 init flags url1 key = 
     let 
-        --mock the url
+     --mock the url
         url = 
             { fragment = Nothing
             , host = "localhost"
@@ -32,12 +43,24 @@ init flags url1 key =
             , query = Nothing 
             }
 
-        token = 
-            url.path
-            |> String.split "/"
-            |> List.reverse
-            |> List.head
-            |> Maybe.map Token
+        parsedUrl =
+            Maybe.withDefault NotFound (Parser.parse routeParser url1)
+
+        _= 
+            Debug.log "parsed URL" parsedUrl
+       
+        token = case parsedUrl of
+            Signin githubToken ->
+                Just (Token githubToken)
+
+            _ -> Nothing
+
+        -- token = 
+        --     url.path
+        --     |> String.split "/"
+        --     |> List.reverse
+        --     |> List.head
+        --     |> Maybe.map Token
 
 
         -- parts =  
