@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Browser exposing (Document, UrlRequest)
 import Browser.Navigation exposing (Key)
@@ -43,24 +43,24 @@ init flags url1 key =
             , query = Nothing 
             }
 
-        parsedUrl =
-            Maybe.withDefault NotFound (Parser.parse routeParser url1)
+        -- parsedUrl =
+        --     Maybe.withDefault NotFound (Parser.parse routeParser url1)
 
-        _= 
-            Debug.log "parsed URL" parsedUrl
+        -- _= 
+        --     Debug.log "parsed URL" parsedUrl
        
-        token = case parsedUrl of
-            Signin githubToken ->
-                Just (Token githubToken)
+        -- token = case parsedUrl of
+        --     Signin githubToken ->
+        --         Just (Token githubToken)
 
-            _ -> Nothing
+        --     _ -> Nothing
 
-        -- token = 
-        --     url.path
-        --     |> String.split "/"
-        --     |> List.reverse
-        --     |> List.head
-        --     |> Maybe.map Token
+        token = 
+            url.path
+            |> String.split "/"
+            |> List.reverse
+            |> List.head
+            |> Maybe.map Token
 
 
         -- parts =  
@@ -82,9 +82,16 @@ init flags url1 key =
             ,navigationKey = key
             }
 
+        commands = 
+            case token of 
+                Just (Token tok) -> 
+                    sendTokenToStorage tok
+
+                Nothing -> Cmd.none
+
         _=Debug.log "newModel" newModel
     in
-    ( newModel , Cmd.none )
+    ( newModel , commands )
 
 -- VIEW
 
@@ -125,3 +132,4 @@ main =
         , onUrlChange = onUrlChange
         }      
 
+port sendTokenToStorage : String -> Cmd msg
