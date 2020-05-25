@@ -9,7 +9,8 @@ import Url.Parser as Parser exposing ((</>))
 -- MODEL
 
 type alias Flags = 
-    {}
+    {storedToken: Maybe String
+    }
 
 type Token = Token String
 
@@ -53,28 +54,32 @@ init flags url1 key =
         --     Signin githubToken ->
         --         Just (Token githubToken)
 
-        --     _ -> Nothing
-
-        token = 
-            url.path
-            |> String.split "/"
-            |> List.reverse
-            |> List.head
-            |> Maybe.map Token
+            -- _ -> 
+                -- Maybe.map Token flags.storedToken 
 
 
-        -- parts =  
-        --     Debug.log "parts" ( String.split "/" url.path )
+        -- token = 
+        --     url.path
+        --     |> String.split "/"
+        --     |> List.reverse
+        --     |> List.head
+        --     |> Maybe.map Token
+
+
+        parts =  
+            Debug.log "parts" ( String.split "/" url.path )
 
         -- token = Maybe.map Token (List.reverse parts |> List.head)
 
 
-        -- token =
-        --     case List.reverse parts |> List.head of
-        --         Nothing -> 
-        --             Nothing
-        --         Just tok -> 
-        --             Just (Token tok)
+        token =
+            case List.reverse parts |> List.head of
+                -- Nothing -> 
+                --     Nothing
+                Just tok -> 
+                    Just (Token tok)
+                _ -> 
+                    Maybe.map Token flags.storedToken 
 
 
         newModel = 
@@ -90,6 +95,7 @@ init flags url1 key =
                 Nothing -> Cmd.none
 
         _=Debug.log "newModel" newModel
+        _=Debug.log "flags" flags
     in
     ( newModel , commands )
 
